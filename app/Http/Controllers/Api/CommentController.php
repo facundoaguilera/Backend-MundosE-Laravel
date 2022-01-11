@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class CommentController extends Controller
 {
@@ -27,7 +29,31 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //Valido los datos
+        $data = $request->only('name', 'email', 'phone', 'message');
+        $validator = Validator::make($data, [
+            'name' => 'required|unique:comments|max:255',
+            'email' => 'required|unique:comments|max:150',
+            'phone' => 'required',
+            'message' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 400);
+        }
+
+        //Creo el comentario en la BD
+        $comments = Comment::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'message' => $request->message,
+        ]);
+        //Respuesta en caso de que todo vaya bien.
+        return response()->json([
+            'message' => 'Comment created',
+            'data' => $comments,
+        ], Response::HTTP_OK);
     }
 
     /**

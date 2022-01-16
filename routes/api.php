@@ -20,3 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/comments', "App\Http\Controllers\Api\CommentController@index");
+Route::post('/comments', "App\Http\Controllers\Api\CommentController@store");
+Route::put('/comments/{id}', "App\Http\Controllers\Api\CommentController@update");
+Route::delete('/comments/{id}', "App\Http\Controllers\Api\CommentController@destroy");

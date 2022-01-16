@@ -29,26 +29,30 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //Valido los datos
-        $data = $request->only('name', 'email', 'phone', 'message');
-        $validator = Validator::make($data, [
+        
+        $validator = Validator::make($request->all(), [
             'name' => 'required|unique:comments|max:255',
             'email' => 'required|unique:comments|max:150',
-            'phone' => 'required',
-            'message' => 'required',
+            'phone'=>'required',
+            'comment'=>'required'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 400);
+        }else {
+
+                //Creo el comentario en la BD
+            $comments = new Comment();
+            $comments->name = $request->name;
+            $comments->email = $request->email;
+            $comments->phone = $request->phone;
+            $comments->comment = $request->comment;
+
+            //dd ($comments);
+
+            $comments->save();
         }
 
-        //Creo el comentario en la BD
-        $comments = Comment::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'message' => $request->message,
-        ]);
         //Respuesta en caso de que todo vaya bien.
         return response()->json([
             'message' => 'Comment created',
@@ -74,10 +78,37 @@ class CommentController extends Controller
      * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Comment $comment)
+    public function update(Request $request,Comment $comment)
     {
-        //
+
+        $comment=Comment::findOrFail($request->id);
+
+        $comments = $request->validate([
+            'name' => 'required|max:150|unique:comments,name,'.$comment->id,
+            'email' => 'required|max:150|unique:comments,email,'.$comment->id,
+            'phone'=>'required',
+            'comment'=>'required'
+        ]);
+
+        
+
+        $comment->name = $request->name;
+        $comment->email = $request->email;
+        $comment->phone = $request->phone;
+        $comment->comment = $request->comment;
+        
+        //dd($comment);
+        
+        $comment->save();
+        
+
+        //Respuesta en caso de que todo vaya bien.
+        return response()->json([
+            'message' => 'Comment created',
+            'data' => $comments,
+        ], Response::HTTP_OK);
     }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -85,8 +116,9 @@ class CommentController extends Controller
      * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Comment $comment)
+    public function destroy(Request $request)
     {
-        //
+        $comments=Comment::destroy($request->id);
+        return $comments;
     }
 }

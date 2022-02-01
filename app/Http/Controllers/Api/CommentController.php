@@ -58,6 +58,9 @@ class CommentController extends Controller
             'message' => 'Comment created',
             'data' => $comments,
         ], Response::HTTP_OK);
+        
+        
+        \Mail::to('example@example.com')->send(new \App\Mail\sendContact($details));
     }
 
     /**

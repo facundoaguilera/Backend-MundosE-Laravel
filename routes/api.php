@@ -19,5 +19,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/save-comment', "App\Http\Controllers\Api\CommentController@store");
+Route::post('/comment', "App\Http\Controllers\Api\CommentController@store");
 

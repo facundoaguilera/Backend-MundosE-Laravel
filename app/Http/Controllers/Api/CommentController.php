@@ -34,7 +34,7 @@ class CommentController extends Controller
             'name' => 'required|unique:comments|max:255',
             'email' => 'required|unique:comments|max:150',
             'phone'=>'required',
-            'comment'=>'required'
+            'message'=>'required'
         ]);
 
         if ($validator->fails()) {
@@ -46,7 +46,7 @@ class CommentController extends Controller
             $comments->name = $request->name;
             $comments->email = $request->email;
             $comments->phone = $request->phone;
-            $comments->comment = $request->comment;
+            $comments->message = $request->message;
 
             //dd ($comments);
 
